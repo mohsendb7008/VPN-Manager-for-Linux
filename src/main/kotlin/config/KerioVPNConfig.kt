@@ -1,16 +1,13 @@
 package config
 
-class KerioVPNConfig(
-    name: String,
-    serverIP: String,
-    serverPort: Int,
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class KerioVPNConfig(
+    val name: String,
+    val serverIP: String,
+    val serverPort: Int,
     val fingerPrint: String,
-    username: String? = null,
-    password: String? = null
-) : VPNConfig(
-    name,
-    serverIP,
-    serverPort,
-    username,
-    password
-)
+    val username: String? = null,
+    val password: String? = null
+): VPNConfig
