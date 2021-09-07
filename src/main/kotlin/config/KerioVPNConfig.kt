@@ -9,5 +9,7 @@ data class KerioVPNConfig(
     val serverPort: Int,
     val fingerPrint: String,
     val username: String? = null,
-    val password: String? = null
+    val password: String? = null,
+    val sth: String? = null,
+    val ssss: String? = null
 ): VPNConfig

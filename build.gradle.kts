@@ -19,6 +19,7 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.charleskorn.kaml:kaml:0.35.3")
+    implementation(kotlin("reflect"))
 }
 
 tasks.withType<KotlinCompile>() {

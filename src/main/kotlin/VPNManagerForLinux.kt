@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.unit.IntSize
 import ui.AppTheme
+import ui.ConfigDialog
+import ui.State
 
 fun main() = Window(title = Constants.APP_NAME, size = IntSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) {
     AppTheme {
@@ -11,14 +13,14 @@ fun main() = Window(title = Constants.APP_NAME, size = IntSize(Constants.WINDOW_
             TopAppBar(title = {
                 Text(Constants.APP_NAME)
             }, actions = {
-                IconButton(onClick = {
-
-                }) {
+                IconButton(onClick = State::openAddConfigDialog) {
                     Icon(Icons.Filled.Add, null)
                 }
             })
         }) {
 
         }
+        if (State.showAddConfigDialog.value)
+            ConfigDialog()
     }
 }
