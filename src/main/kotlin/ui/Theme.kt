@@ -35,7 +35,7 @@ private val typography = Typography(
 )
 
 @Composable
-fun DigikalaTheme(content: @Composable () -> Unit) = MaterialTheme(
+fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
     colors = colors,
     shapes = shapes,
     typography = typography,
