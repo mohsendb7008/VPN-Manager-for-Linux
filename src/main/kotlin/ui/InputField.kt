@@ -13,7 +13,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import kotlin.reflect.KParameter
 
 @Composable
-fun InputField(name: String, parameter: KParameter, map: HashMap<KParameter, MutableState<Any?>>, modifier: Modifier = Modifier) {
+fun InputField(
+    name: String,
+    parameter: KParameter,
+    map: HashMap<KParameter, MutableState<Any?>>,
+    modifier: Modifier = Modifier
+) {
     when (val type = parameter.type.toString()) {
         "kotlin.String" -> {
             OutlinedTextField(value = map[parameter]!!.value as String, onValueChange = {
@@ -38,6 +43,10 @@ fun InputField(name: String, parameter: KParameter, map: HashMap<KParameter, Mut
                 label = {
                     Text(name)
                 },
+                isError = runCatching {
+                    map[parameter]!!.value.toString().toInt()
+                    false
+                }.getOrDefault(true),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = modifier
             )

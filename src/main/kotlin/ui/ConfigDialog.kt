@@ -19,6 +19,7 @@ import config.VPNConfig
 import config.VPNConfigFieldInformation
 import config.VPNConfigInformation
 import util.PrimaryConstructorDefaultMapBuilder
+import util.PrimaryConstructorMapValidator
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -64,8 +65,13 @@ fun ConfigDialog() {
                 )
             }
             Button(onClick = {
-                // TODO: Save it to file
-                println(State.chosenConfig.value.primaryConstructor?.callBy(constructorMap.mapValues { it.value.value }))
+                runCatching {
+                    PrimaryConstructorMapValidator.validate(constructorMap)
+                    State.chosenConfig.value.primaryConstructor?.callBy(constructorMap.mapValues { it.value.value })
+                        ?.save()
+                }.onFailure {
+                    State.reportException(it)
+                }
                 State.closeAddConfigDialog()
             }, modifier = Modifier.padding(8.dp)) {
                 Text("Save")

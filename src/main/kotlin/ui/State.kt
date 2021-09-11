@@ -21,4 +21,14 @@ object State {
         it.findAnnotation<VPNConfigInformation>()?.priority ?: Int.MAX_VALUE
     }!!)
 
+    val exceptionDialogThrowable = mutableStateOf<Throwable?>(null)
+
+    fun reportException(throwable: Throwable) {
+        exceptionDialogThrowable.value = throwable
+    }
+
+    fun clearException() {
+        exceptionDialogThrowable.value = null
+    }
+
 }

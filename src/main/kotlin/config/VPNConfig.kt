@@ -1,3 +1,7 @@
 package config
 
-sealed interface VPNConfig
+sealed interface VPNConfig {
+
+    fun save()
+
+}
