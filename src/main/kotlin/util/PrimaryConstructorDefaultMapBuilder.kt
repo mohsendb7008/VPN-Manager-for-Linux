@@ -12,7 +12,7 @@ object PrimaryConstructorDefaultMapBuilder {
         `class`.primaryConstructor?.parameters?.forEach { param ->
             it[param] = when (param.type.toString()) {
                 "kotlin.String" -> mutableStateOf("")
-                "kotlin.String?" -> mutableStateOf("")
+                "kotlin.String?" -> mutableStateOf(null)
                 "kotlin.Int" -> mutableStateOf(null)
                 "kotlin.Boolean" -> mutableStateOf(false)
                 else -> throw NotImplementedError("${param.type} is not supported")

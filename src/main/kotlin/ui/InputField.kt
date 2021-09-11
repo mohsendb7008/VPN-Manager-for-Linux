@@ -23,7 +23,7 @@ fun InputField(name: String, parameter: KParameter, map: HashMap<KParameter, Mut
             }, isError = (map[parameter]!!.value as String).trim() == "", modifier = modifier)
         }
         "kotlin.String?" -> {
-            OutlinedTextField(value = map[parameter]!!.value as String, onValueChange = {
+            OutlinedTextField(value = map[parameter]!!.value as String? ?: "", onValueChange = {
                 map[parameter]!!.value = if (it.trim() == "") null else it
             }, label = {
                 Text(name)
