@@ -6,53 +6,46 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import kotlin.reflect.KType
+import kotlin.reflect.KParameter
 
 @Composable
-fun InputField(name: String, type: KType, modifier: Modifier = Modifier) {
-    when (type.toString()) {
+fun InputField(name: String, parameter: KParameter, map: HashMap<KParameter, MutableState<Any?>>, modifier: Modifier = Modifier) {
+    when (val type = parameter.type.toString()) {
         "kotlin.String" -> {
-            val text = remember { mutableStateOf("") }
-            OutlinedTextField(value = text.value, onValueChange = {
-                text.value = it
+            OutlinedTextField(value = map[parameter]!!.value as String, onValueChange = {
+                map[parameter]!!.value = it
             }, label = {
                 Text(name)
-            }, isError = text.value.trim() == "", modifier = modifier)
+            }, isError = (map[parameter]!!.value as String).trim() == "", modifier = modifier)
         }
         "kotlin.String?" -> {
-            val text = remember { mutableStateOf("") }
-            OutlinedTextField(value = text.value, onValueChange = {
-                text.value = it
+            OutlinedTextField(value = map[parameter]!!.value as String, onValueChange = {
+                map[parameter]!!.value = if (it.trim() == "") null else it
             }, label = {
                 Text(name)
             }, modifier = modifier)
         }
         "kotlin.Int" -> {
-            val number = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = number.value,
+                value = (map[parameter]!!.value as Int?)?.toString() ?: "",
                 onValueChange = {
-                    number.value = it
+                    map[parameter]!!.value = runCatching { it.toInt() }.getOrDefault(null)
                 },
                 label = {
                     Text(name)
-                }, isError = runCatching {
-                    number.value.toInt()
-                    false
-                }.getOrDefault(true),
+                },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = modifier
             )
         }
         "kotlin.Boolean" -> {
-            val bool = remember { mutableStateOf(false) }
-            Row(modifier = modifier) {
-                Checkbox(checked = bool.value, onCheckedChange = {
-                    bool.value = it
+            Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = map[parameter]!!.value as Boolean, onCheckedChange = {
+                    map[parameter]!!.value = it
                 })
                 Text(name)
             }

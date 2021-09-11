@@ -16,11 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.v1.Dialog
 import androidx.compose.ui.window.v1.DialogProperties
 import config.VPNConfig
-import kotlin.reflect.full.memberProperties
+import config.VPNConfigFieldInformation
+import config.VPNConfigInformation
+import util.PrimaryConstructorDefaultMapBuilder
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 
 @Composable
 fun ConfigDialog() {
-    val configs = VPNConfig::class.sealedSubclasses
+    val configs = VPNConfig::class.sealedSubclasses.sortedBy {
+        it.findAnnotation<VPNConfigInformation>()?.priority ?: Int.MAX_VALUE
+    }
     Dialog(
         onDismissRequest = State::closeAddConfigDialog,
         DialogProperties(
@@ -34,17 +41,34 @@ fun ConfigDialog() {
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Row {
                 configs.forEach { config ->
-                    Row(modifier = Modifier.padding(8.dp).weight(1f)) {
+                    Row(modifier = Modifier.padding(8.dp).weight(1f), verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(State.chosenConfig.value == config,
                             onClick = {
                                 State.chosenConfig.value = config
                             })
-                        Text(text = config.simpleName.toString())
+                        Text(
+                            text = config.findAnnotation<VPNConfigInformation>()?.typeName
+                                ?: config.simpleName.toString()
+                        )
                     }
                 }
             }
-            State.chosenConfig.value.memberProperties.forEach {
-                InputField(it.name, it.returnType, modifier = Modifier.padding(8.dp))
+            val constructorMap = PrimaryConstructorDefaultMapBuilder.build(State.chosenConfig.value)
+            State.chosenConfig.value.primaryConstructor?.parameters?.sortedBy {
+                State.chosenConfig.value.declaredMemberProperties.first { member -> member.name == it.name }.getter.findAnnotation<VPNConfigFieldInformation>()?.priority
+                    ?: Int.MAX_VALUE
+            }?.forEach {
+                InputField(
+                    State.chosenConfig.value.declaredMemberProperties.first { member -> member.name == it.name }.getter.findAnnotation<VPNConfigFieldInformation>()?.fieldName
+                        ?: it.name.toString(), it, constructorMap, modifier = Modifier.padding(8.dp)
+                )
+            }
+            Button(onClick = {
+                // TODO: Save it to file
+                println(State.chosenConfig.value.primaryConstructor?.callBy(constructorMap.mapValues { it.value.value }))
+                State.closeAddConfigDialog()
+            }, modifier = Modifier.padding(8.dp)) {
+                Text("Save")
             }
         }
     }

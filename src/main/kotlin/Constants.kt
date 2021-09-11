@@ -10,6 +10,6 @@ object Constants {
 
     const val CONFIG_DIALOG_BASE_WIDTH = 200
 
-    const val CONFIG_DIALOG_BASE_HEIGHT = 600
+    const val CONFIG_DIALOG_BASE_HEIGHT = 650
 
 }
