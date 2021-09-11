@@ -69,6 +69,7 @@ fun ConfigDialog() {
                     PrimaryConstructorMapValidator.validate(constructorMap)
                     State.chosenConfig.value.primaryConstructor?.callBy(constructorMap.mapValues { it.value.value })
                         ?.save()
+                    State.reloadConfigs()
                 }.onFailure {
                     State.reportException(it)
                 }

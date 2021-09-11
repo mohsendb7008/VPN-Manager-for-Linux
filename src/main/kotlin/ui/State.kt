@@ -2,6 +2,7 @@ package ui
 
 import androidx.compose.runtime.mutableStateOf
 import config.VPNConfig
+import config.VPNConfigCompanion
 import config.VPNConfigInformation
 import kotlin.reflect.full.findAnnotation
 
@@ -29,6 +30,20 @@ object State {
 
     fun clearException() {
         exceptionDialogThrowable.value = null
+    }
+
+    val allConfigs = mutableStateOf(loadConfigs())
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun loadConfigs() =
+        buildList {
+            VPNConfigCompanion::class.sealedSubclasses.forEach {
+                it.objectInstance?.retrieveAll()?.let(this::addAll)
+            }
+        }
+
+    fun reloadConfigs() {
+        allConfigs.value = loadConfigs()
     }
 
 }

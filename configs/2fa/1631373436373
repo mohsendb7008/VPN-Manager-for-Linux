@@ -1,0 +1,6 @@
+name: "My VPN"
+serverIP: "1.2.3.4"
+serverPort: 124
+autoOTP: true
+username: null
+password: null
